@@ -109,11 +109,10 @@ node server.js
 
 ---
 
-📸 Preview (Add Screenshot Here)
-
-«Tip: Upload a screenshot of your project and paste here»
-
-![App Screenshot](your-image-link)
+📸 Preview 
+<p align="center">
+<img src="https://github.com/Utkarshya01/election-assistant/blob/main/preview.png" width="800" />
+</p>
 
 ---
 
