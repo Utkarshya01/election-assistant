@@ -87,7 +87,7 @@ app.post('/api/civic', async (req, res) => {
 // Chat Endpoint with ChatGPT
 app.post('/api/chat', async (req, res) => {
     try {
-        const { message } = req.body;
+        const { message, history = [], userContext = "" } = req.body;
         if (!message) {
             return res.status(400).json({ error: 'Message is required' });
         }
@@ -97,14 +97,21 @@ app.post('/api/chat', async (req, res) => {
             apiKey: process.env.OPENAI_API_KEY
         });
         
-        const prompt = `You are a helpful and concise Election Assistant chatbot. Answer the user's question about elections concisely (2-4 sentences max). If they ask about something unrelated to elections or voting, gently steer them back.`;
+        let prompt = `You are a helpful and concise Election Assistant chatbot. Answer the user's question about elections concisely (2-4 sentences max). If they ask about something unrelated to elections or voting, gently steer them back.`;
         
+        if (userContext) {
+            prompt += `\n\nUSER CONTEXT: ${userContext}\nUse this context to personalize your answers if the user asks where to vote or what their polling location is.`;
+        }
+        
+        const messages = [
+            { role: "system", content: prompt },
+            ...history,
+            { role: "user", content: message }
+        ];
+
         const response = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
-            messages: [
-                { role: "system", content: prompt },
-                { role: "user", content: message }
-            ]
+            messages: messages
         });
         
         const text = response.choices[0].message.content;

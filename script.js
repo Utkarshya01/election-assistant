@@ -37,6 +37,9 @@ const timelineKeywords = [
     "counting", "result", "results"
 ];
 
+let chatHistory = [];
+let userContextString = "";
+
 async function answerQuestion() {
     let inputField = document.getElementById("question");
     let q = inputField.value.trim();
@@ -67,10 +70,17 @@ async function answerQuestion() {
         const response = await fetch('http://localhost:3000/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: q })
+            body: JSON.stringify({ 
+                message: q,
+                history: chatHistory,
+                userContext: userContextString
+            })
         });
         
         const data = await response.json();
+        
+        // Update history
+        chatHistory.push({ role: "user", content: q });
         
         // Still try to highlight timeline steps based on simple keywords
         let qLower = q.toLowerCase();
@@ -90,6 +100,11 @@ async function answerQuestion() {
         
         let reply = data.reply || "Sorry, I couldn't get a response.";
         reply = escapeHTML(reply); // Sanitize AI output to prevent XSS
+        
+        chatHistory.push({ role: "assistant", content: reply });
+        // Keep history manageable
+        if (chatHistory.length > 6) chatHistory = chatHistory.slice(-6);
+        
         // Format reply to handle basic markdown if Gemini sends any (bold/newlines)
         reply = reply.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         
@@ -193,6 +208,7 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         `;
         messageCount = 0; // reset message count
+        chatHistory = []; // clear AI history
     });
 
     // Dark Mode Toggle Logic
@@ -215,6 +231,65 @@ document.addEventListener("DOMContentLoaded", function() {
             if (step) {
                 let title = step.querySelector(".step-title").innerText;
                 showInfo(title);
+            }
+        });
+    }
+
+    // Voice Input Integration (Accessibility)
+    const voiceBtn = document.getElementById("voice-btn");
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (voiceBtn && SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        
+        voiceBtn.addEventListener("click", () => {
+            voiceBtn.innerText = "🔴"; // Show recording status
+            recognition.start();
+        });
+        
+        recognition.onresult = (event) => {
+            document.getElementById("question").value = event.results[0][0].transcript;
+            voiceBtn.innerText = "🎤";
+            answerQuestion(); // Auto-send
+        };
+        
+        recognition.onerror = () => {
+            voiceBtn.innerText = "🎤";
+        };
+    }
+
+    // Geolocation Integration (Real-world usability)
+    const geoBtn = document.getElementById("geo-btn");
+    if (geoBtn) {
+        geoBtn.addEventListener("click", () => {
+            if (navigator.geolocation) {
+                geoBtn.innerText = "⏳";
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    if (typeof google !== 'undefined' && google.maps && google.maps.Geocoder) {
+                        const geocoder = new google.maps.Geocoder();
+                        geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+                            if (status === "OK" && results[0]) {
+                                document.getElementById("address-input").value = results[0].formatted_address;
+                                geoBtn.innerText = "📍";
+                                checkBallot(); // Auto trigger check
+                            } else {
+                                alert("Could not determine your exact address.");
+                                geoBtn.innerText = "📍";
+                            }
+                        });
+                    } else {
+                        alert("Google Maps API is still loading. Please try again.");
+                        geoBtn.innerText = "📍";
+                    }
+                }, () => {
+                    alert("Location access denied or failed.");
+                    geoBtn.innerText = "📍";
+                });
+            } else {
+                alert("Geolocation is not supported by your browser.");
             }
         });
     }
@@ -301,6 +376,28 @@ async function checkBallot() {
             // Show on map
             mapContainer.style.display = 'block';
             showOnMap(addressString, loc.address.locationName || 'Polling Station');
+            
+            // Set context for the AI Chatbot
+            userContextString = `The user's polling location is ${loc.address.locationName} located at ${addressString}. The polling hours are: ${loc.pollingHours || 'Unknown'}.`;
+            
+            // Real Google Calendar Integration - dynamically parse Civic API dates
+            if (data.election && data.election.electionDay) {
+                const eDate = data.election.electionDay;
+                const eName = data.election.name;
+                
+                const dynamicCalBtn = document.createElement('a');
+                dynamicCalBtn.className = 'calendar-btn';
+                dynamicCalBtn.href = '#';
+                dynamicCalBtn.style.marginLeft = '10px';
+                dynamicCalBtn.innerText = `📅 Add ${eName} to Calendar`;
+                dynamicCalBtn.onclick = (e) => {
+                    e.preventDefault();
+                    window.addToCalendar(eName, `Polling Location: ${loc.address.locationName} (${addressString}). Hours: ${loc.pollingHours || 'Check locally'}.`, eDate, eDate);
+                };
+                
+                resultContainer.appendChild(document.createElement('br'));
+                resultContainer.appendChild(dynamicCalBtn);
+            }
             
         } else if (data.state && data.state.length > 0 && data.state[0].electionAdministrationBody) {
             const admin = data.state[0].electionAdministrationBody;

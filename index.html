@@ -42,6 +42,7 @@
     <div class="input-area">
         <label for="question" class="sr-only">Ask a question</label>
         <input type="text" id="question" aria-label="Ask a question about elections" placeholder="Ask about voter ID, dates, results...">
+        <button id="voice-btn" class="icon-btn" title="Use Voice Input" style="padding: 0 10px; font-size: 20px;" aria-label="Voice Input">🎤</button>
         <button onclick="answerQuestion()">Send 🚀</button>
     </div>
 
@@ -58,6 +59,7 @@
         <div class="input-area" style="margin-bottom: 10px;">
             <label for="address-input" class="sr-only">Home Address</label>
             <input type="text" id="address-input" aria-label="Enter your home address to find polling locations" placeholder="Enter your home address...">
+            <button id="geo-btn" class="icon-btn" title="Use Current Location" style="padding: 0 10px; font-size: 20px; background: none; border: 1px solid var(--border-color); border-radius: 8px;" aria-label="Use Current Location">📍</button>
             <button id="check-ballot-btn" aria-label="Find Polling Location">Find Location 🔍</button>
         </div>
         <div id="map" role="region" aria-label="Interactive map showing polling location"></div>
