@@ -322,48 +322,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-// --- Google Services Integration ---
+// --- Map & Autocomplete Integration ---
 
-let map;
-let marker;
-let autocomplete;
-
-// 1. Fetch Config and Load Google Maps JS (Optimized)
-async function loadGoogleMaps() {
-    // Prevent duplicate script injection if already loaded or loading
-    if (document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]')) {
-        return;
-    }
-    
-    try {
-        const response = await fetch(`${BACKEND_URL}/api/config`);
-        const config = await response.json();
-        
-        if (config.mapsApiKey) {
-            const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${config.mapsApiKey}&libraries=places&callback=initMap`;
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-        } else {
-            console.warn('Google Maps API Key not found in backend configuration.');
-        }
-    } catch (error) {
-        console.error('Failed to load Google Maps configuration:', error);
-    }
-}
-
-// Global callback for Maps JS
-window.initMap = function() {
-    // 1. Initialize Ballot Address Autocomplete
-    const input = document.getElementById('address-input');
-    if (input) {
-        autocomplete = new google.maps.places.Autocomplete(input);
-        document.getElementById('check-ballot-btn').addEventListener('click', checkBallot);
-    }
-};
-
-// Display Google Maps search results in the iframe
+// Open Google Maps in a new tab for general search
 window.searchGoogleMaps = function() {
     const query = document.getElementById('side-map-search').value;
     if (query) {
@@ -519,5 +480,79 @@ window.addToCalendar = function(eventTitle, details, startDate, endDate) {
 
 // Initialize new features when DOM is ready
 document.addEventListener("DOMContentLoaded", function() {
-    loadGoogleMaps();
+    document.getElementById('check-ballot-btn').addEventListener('click', checkBallot);
+    setupCustomAutocomplete();
 });
+
+// Custom OpenStreetMap (Nominatim) Autocomplete to replace broken Google Places API
+function setupCustomAutocomplete() {
+    const input = document.getElementById('address-input');
+    if (!input) return;
+
+    // Create a container for suggestions
+    const suggestionBox = document.createElement('div');
+    suggestionBox.className = 'autocomplete-suggestions';
+    suggestionBox.style.cssText = 'position: absolute; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; width: calc(100% - 30px); max-height: 200px; overflow-y: auto; z-index: 1000; display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 5px;';
+    
+    // Insert suggestion box right after the input area container so it floats
+    const inputArea = input.parentElement;
+    inputArea.style.position = 'relative';
+    inputArea.appendChild(suggestionBox);
+
+    let timeoutId;
+
+    input.addEventListener('input', function() {
+        clearTimeout(timeoutId);
+        const query = this.value.trim();
+        
+        if (query.length < 3) {
+            suggestionBox.style.display = 'none';
+            return;
+        }
+
+        // Debounce requests
+        timeoutId = setTimeout(async () => {
+            try {
+                // Use OpenStreetMap's free Nominatim API for address search
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5`, {
+                    headers: { 'Accept-Language': 'en-US,en' }
+                });
+                const data = await response.json();
+                
+                suggestionBox.innerHTML = '';
+                if (data && data.length > 0) {
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.style.cssText = 'padding: 10px; cursor: pointer; border-bottom: 1px solid var(--border-color); color: var(--text-color);';
+                        div.innerHTML = item.display_name;
+                        
+                        // Hover effect
+                        div.onmouseover = () => div.style.background = 'var(--bg-timeline)';
+                        div.onmouseout = () => div.style.background = 'transparent';
+                        
+                        // Click selection
+                        div.onclick = () => {
+                            input.value = item.display_name;
+                            suggestionBox.style.display = 'none';
+                            checkBallot(); // Auto-trigger check
+                        };
+                        suggestionBox.appendChild(div);
+                    });
+                    suggestionBox.style.display = 'block';
+                } else {
+                    suggestionBox.style.display = 'none';
+                }
+            } catch (error) {
+                console.error("Autocomplete fetch error:", error);
+                suggestionBox.style.display = 'none';
+            }
+        }, 500); // 500ms delay to prevent spamming the API
+    });
+
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', function(e) {
+        if (e.target !== input && e.target !== suggestionBox) {
+            suggestionBox.style.display = 'none';
+        }
+    });
+}
