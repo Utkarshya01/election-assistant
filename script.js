@@ -4,6 +4,13 @@ function showInfo(type) {
     answerQuestion();
 }
 
+// Set the backend URL dynamically. It uses localhost for local testing, 
+// and will use the Render URL when deployed on GitHub Pages.
+// TODO: Replace the placeholder URL with your actual Render URL after deployment!
+const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+    ? 'http://localhost:3000' 
+    : 'https://your-render-url-goes-here.onrender.com';
+
 // Visually highlights the matching step in the timeline
 function highlightStep(keyword) {
     // Remove active class from all steps
@@ -67,7 +74,7 @@ async function answerQuestion() {
     let typingId = addMessage("bot", '🤖 Typing<span class="typing-dots"></span>');
 
     try {
-        const response = await fetch('http://localhost:3000/api/chat', {
+        const response = await fetch(`${BACKEND_URL}/api/chat`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -309,7 +316,7 @@ async function loadGoogleMaps() {
     }
     
     try {
-        const response = await fetch('http://localhost:3000/api/config');
+        const response = await fetch(`${BACKEND_URL}/api/config`);
         const config = await response.json();
         
         if (config.mapsApiKey) {
@@ -349,7 +356,7 @@ async function checkBallot() {
     btn.disabled = true;
 
     try {
-        const response = await fetch('http://localhost:3000/api/civic', {
+        const response = await fetch(`${BACKEND_URL}/api/civic`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ address })
