@@ -11,114 +11,114 @@
 
 <div class="container">
 
-    <div class="header-wrapper">
+    <!-- SECTION 1: Chat and Interaction -->
+    <section class="page-section">
+        <div class="header-wrapper">
         <h1>🗳️ Election Assistant</h1>
         <div class="header-actions">
             <button id="theme-toggle" class="icon-btn" title="Toggle Dark Mode">🌙</button>
         </div>
     </div>
 
-    <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('tab-chatbot', this)">💬 Chat & Info</button>
-        <button class="tab-btn" onclick="switchTab('tab-timeline', this)">📊 Election Timeline</button>
-        <button class="tab-btn" onclick="switchTab('tab-location', this)">📍 Map & Locations</button>
+    <div class="buttons">
+        <button onclick="showInfo('registration')">Registration</button>
+        <button onclick="showInfo('voting')">Voting Day</button>
+        <button onclick="showInfo('results')">Results</button>
     </div>
 
-    <!-- Section 1: Chatbot -->
-    <div id="tab-chatbot" class="tab-content active">
-        <div class="buttons">
-            <button onclick="showInfo('registration')">Registration</button>
-            <button onclick="showInfo('voting')">Voting Day</button>
-            <button onclick="showInfo('results')">Results</button>
-        </div>
-
-        <div id="chatbox" aria-live="polite" aria-atomic="false" role="log" aria-label="Chat Message History">
-            <div id="output" class="chat-msg bot-msg">
-                <div class="msg-content">👋 Ask me anything about elections!</div>
-                <div class="msg-actions">
-                    <button class="msg-action-btn" onclick="copyText(this)" title="Copy">📋</button>
-                    <button class="msg-action-btn" onclick="toggleFeedback(this, 'like')" title="Like">👍</button>
-                    <button class="msg-action-btn" onclick="toggleFeedback(this, 'dislike')" title="Dislike">👎</button>
-                </div>
+    <div id="chatbox" aria-live="polite" aria-atomic="false" role="log" aria-label="Chat Message History">
+        <div id="output" class="chat-msg bot-msg">
+            <div class="msg-content">👋 Ask me anything about elections!</div>
+            <div class="msg-actions">
+                <button class="msg-action-btn" onclick="copyText(this)" title="Copy">📋</button>
+                <button class="msg-action-btn" onclick="toggleFeedback(this, 'like')" title="Like">👍</button>
+                <button class="msg-action-btn" onclick="toggleFeedback(this, 'dislike')" title="Dislike">👎</button>
             </div>
         </div>
-        
-        <div class="chat-controls">
-            <button id="new-chat-btn" class="clear-btn" title="Start New Chat">🔄</button>
-        </div>
-
-        <div class="input-area">
-            <label for="question" class="sr-only">Ask a question</label>
-            <input type="text" id="question" aria-label="Ask a question about elections" placeholder="Ask about voter ID, dates, results...">
-            <button id="voice-btn" class="icon-btn" title="Use Voice Input" style="padding: 0 10px; font-size: 20px;" aria-label="Voice Input">🎤</button>
-            <button onclick="answerQuestion()">Send 🚀</button>
-        </div>
-
-        <!-- Quick Suggestion Buttons -->
-        <div class="quick-suggestions">
-            <button class="suggestion-btn" onclick="showInfo('Check Eligibility')">Check Eligibility</button>
-            <button class="suggestion-btn" onclick="showInfo('Required Documents')">Required Documents</button>
-            <button class="suggestion-btn" onclick="showInfo('Voting Process')">Voting Process</button>
-        </div>
+    </div>
+    
+    <div class="chat-controls">
+        <button id="new-chat-btn" class="clear-btn" title="Start New Chat">🔄</button>
     </div>
 
-    <!-- Section 2: Timeline -->
-    <div id="tab-timeline" class="tab-content">
+    <div class="input-area">
+        <label for="question" class="sr-only">Ask a question</label>
+        <input type="text" id="question" aria-label="Ask a question about elections" placeholder="Ask about voter ID, dates, results...">
+        <button id="voice-btn" class="icon-btn" title="Use Voice Input" style="padding: 0 10px; font-size: 20px;" aria-label="Voice Input">🎤</button>
+        <button onclick="answerQuestion()">Send 🚀</button>
+    </div>
+
+    <!-- Quick Suggestion Buttons -->
+    <div class="quick-suggestions">
+        <button class="suggestion-btn" onclick="showInfo('Check Eligibility')">Check Eligibility</button>
+        <button class="suggestion-btn" onclick="showInfo('Required Documents')">Required Documents</button>
+        <button class="suggestion-btn" onclick="showInfo('Voting Process')">Voting Process</button>
+    </div>
+
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- SECTION 2: Election Timeline -->
+    <section class="page-section">
         <h2>📊 Election Timeline</h2>
-        <div id="timeline">
-            <div class="step completed" tabindex="0">
-                <div class="circle">✓</div>
-                <p class="step-title">Registration</p>
-                <div class="tooltip">Register as a voter. Check eligibility, required documents, and deadlines.</div>
-                <a href="#" class="calendar-btn" onclick="addToCalendar('Voter Registration Deadline', 'Last day to register to vote.', '2026-04-15', '2026-04-15')">📅 Add to Calendar</a>
-            </div>
-            <div class="step completed" tabindex="0">
-                <div class="circle">✓</div>
-                <p class="step-title">Campaigning</p>
-                <div class="tooltip">Candidates promote ideas and connect with voters before election day.</div>
-            </div>
-            <div class="step active" tabindex="0">
-                <div class="circle">3</div>
-                <p class="step-title">Voting Day</p>
-                <div class="tooltip">Cast your vote at your polling station. Carry valid ID and follow guidelines.</div>
-                <a href="#" class="calendar-btn" onclick="addToCalendar('Election Voting Day', 'Go cast your vote at your designated polling location.', '2026-05-10', '2026-05-10')">📅 Add to Calendar</a>
-            </div>
-            <div class="step" tabindex="0">
-                <div class="circle">4</div>
-                <p class="step-title">Counting</p>
-                <div class="tooltip">Votes are counted securely. Results are verified before announcement.</div>
-            </div>
-            <div class="step" tabindex="0">
-                <div class="circle">5</div>
-                <p class="step-title">Results</p>
-                <div class="tooltip">Final results are declared. Winning candidate is announced officially.</div>
-            </div>
+    <div id="timeline">
+        <div class="step completed" tabindex="0">
+            <div class="circle">✓</div>
+            <p class="step-title">Registration</p>
+            <div class="tooltip">Register as a voter. Check eligibility, required documents, and deadlines.</div>
+            <a href="#" class="calendar-btn" onclick="addToCalendar('Voter Registration Deadline', 'Last day to register to vote.', '2026-04-15', '2026-04-15')">📅 Add to Calendar</a>
+        </div>
+        <div class="step completed" tabindex="0">
+            <div class="circle">✓</div>
+            <p class="step-title">Campaigning</p>
+            <div class="tooltip">Candidates promote ideas and connect with voters before election day.</div>
+        </div>
+        <div class="step active" tabindex="0">
+            <div class="circle">3</div>
+            <p class="step-title">Voting Day</p>
+            <div class="tooltip">Cast your vote at your polling station. Carry valid ID and follow guidelines.</div>
+            <a href="#" class="calendar-btn" onclick="addToCalendar('Election Voting Day', 'Go cast your vote at your designated polling location.', '2026-05-10', '2026-05-10')">📅 Add to Calendar</a>
+        </div>
+        <div class="step" tabindex="0">
+            <div class="circle">4</div>
+            <p class="step-title">Counting</p>
+            <div class="tooltip">Votes are counted securely. Results are verified before announcement.</div>
+        </div>
+        <div class="step" tabindex="0">
+            <div class="circle">5</div>
+            <p class="step-title">Results</p>
+            <div class="tooltip">Final results are declared. Winning candidate is announced officially.</div>
         </div>
     </div>
 
-    <!-- Section 3: Location Services -->
-    <div id="tab-location" class="tab-content">
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- SECTION 3: Maps and Polling Location -->
+    <section class="page-section">
         <!-- New "Check My Ballot" Section -->
         <div class="ballot-section" aria-labelledby="ballot-heading">
-            <h2 id="ballot-heading">📍 Check My Ballot & Polling Location</h2>
-            <div class="input-area" style="margin-bottom: 10px;">
-                <label for="address-input" class="sr-only">Home Address</label>
-                <input type="text" id="address-input" aria-label="Enter your home address to find polling locations" placeholder="Enter your home address...">
-                <button id="geo-btn" class="icon-btn" title="Use Current Location" style="padding: 0 10px; font-size: 20px; background: none; border: 1px solid var(--border-color); border-radius: 8px;" aria-label="Use Current Location">📍</button>
-                <button id="check-ballot-btn" aria-label="Find Polling Location">Find Location 🔍</button>
-            </div>
-            <div id="civic-info-result" class="civic-info-container" aria-live="polite"></div>
+        <h2 id="ballot-heading">📍 Check My Ballot & Polling Location</h2>
+        <div class="input-area" style="margin-bottom: 10px;">
+            <label for="address-input" class="sr-only">Home Address</label>
+            <input type="text" id="address-input" aria-label="Enter your home address to find polling locations" placeholder="Enter your home address...">
+            <button id="geo-btn" class="icon-btn" title="Use Current Location" style="padding: 0 10px; font-size: 20px; background: none; border: 1px solid var(--border-color); border-radius: 8px;" aria-label="Use Current Location">📍</button>
+            <button id="check-ballot-btn" aria-label="Find Polling Location">Find Location 🔍</button>
         </div>
-
-        <div class="side-map-section" style="margin-top: 25px;">
-            <h2>🌍 General Map Search</h2>
-            <div class="input-area" style="margin-bottom: 10px;">
-                <input id="side-map-search" type="text" placeholder="Enter a location or polling station...">
-                <button onclick="searchGoogleMaps()" aria-label="Search on Google Maps">Search 🔍</button>
-            </div>
-            <iframe id="general-map-iframe" src="https://maps.google.com/maps?q=United%20States&t=&z=4&ie=UTF8&iwloc=&output=embed" width="100%" height="300" frameborder="0" style="border:0; border-radius: 10px; margin-top: 15px;" allowfullscreen></iframe>
-        </div>
+        <div id="civic-info-result" class="civic-info-container" aria-live="polite"></div>
     </div>
+
+    <div class="side-map-section" style="margin-top: 25px;">
+        <h2>🌍 General Map Search</h2>
+        <div class="input-area" style="margin-bottom: 10px;">
+            <input id="side-map-search" type="text" placeholder="Enter a location or polling station...">
+            <button onclick="searchGoogleMaps()" aria-label="Search on Google Maps">Search 🔍</button>
+        </div>
+        <iframe id="general-map-iframe" src="https://maps.google.com/maps?q=United%20States&t=&z=4&ie=UTF8&iwloc=&output=embed" width="100%" height="300" frameborder="0" style="border:0; border-radius: 10px; margin-top: 15px;" allowfullscreen></iframe>
+        </div>
+    </section>
 
 </div>
 
