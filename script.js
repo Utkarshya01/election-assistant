@@ -492,7 +492,7 @@ function setupCustomAutocomplete() {
     // Create a container for suggestions
     const suggestionBox = document.createElement('div');
     suggestionBox.className = 'autocomplete-suggestions';
-    suggestionBox.style.cssText = 'position: absolute; top: 100%; left: 0; width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 1000; display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 5px;';
+    suggestionBox.style.cssText = 'position: absolute; top: 100%; left: 0; width: 100%; background: var(--container-bg); border: 1px solid var(--border-color); border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 1000; display: none; box-shadow: 0 8px 16px rgba(0,0,0,0.2); margin-top: 5px;';
     
     // Insert suggestion box right after the input area container so it floats
     const inputArea = input.parentElement;
