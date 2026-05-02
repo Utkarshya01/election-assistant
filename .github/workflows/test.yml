@@ -27,4 +27,6 @@ jobs:
       run: npm ci
       
     - name: Run Backend Security & Validation Tests
+      env:
+        GOOGLE_MAPS_API_KEY: "dummy_key_for_testing"
       run: npm test
