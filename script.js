@@ -2,6 +2,12 @@ function showInfo(type) {
     let inputField = document.getElementById("question");
     inputField.value = type;
     answerQuestion();
+    
+    // Automatically switch to chat tab so user can see the response
+    if (typeof switchTab === 'function') {
+        const chatTabBtn = document.querySelector('.nav-tabs .tab-btn:first-child');
+        switchTab('tab-chatbot', chatTabBtn);
+    }
 }
 
 // Set the backend URL dynamically. It uses localhost for local testing, 
@@ -556,3 +562,22 @@ function setupCustomAutocomplete() {
         }
     });
 }
+
+// Tab Switching Logic
+window.switchTab = function(tabId, btn) {
+    // Hide all tab contents
+    const contents = document.querySelectorAll('.tab-content');
+    contents.forEach(content => content.classList.remove('active'));
+    
+    // Remove active class from all buttons
+    const buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach(button => button.classList.remove('active'));
+    
+    // Show selected tab content
+    document.getElementById(tabId).classList.add('active');
+    
+    // Add active class to clicked button
+    if (btn) {
+        btn.classList.add('active');
+    }
+};
