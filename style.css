@@ -63,12 +63,11 @@ body {
     width: 80%;
     max-width: 900px;
     margin: 20px auto;
-    background: var(--bg-container);
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0px 5px 15px var(--shadow-color);
+    /* Background and padding moved to .page-section to create distinct blocks */
     text-align: center;
-    transition: background 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* 8px gap between sections */
 }
 
 /* Theme Toggle Header */
@@ -498,18 +497,105 @@ body.dark-mode .step.active .circle {
     border: 1px solid var(--border-color);
 }
 
+/* --- Responsive Design (Mobile Support) --- */
 @media (max-width: 768px) {
-    .main-content-layout {
+    /* Maximize screen usage on mobile */
+    .container {
+        width: 95%;
+        margin: 10px auto;
+    }
+
+    .page-section {
+        padding: 15px;
+    }
+
+    /* Header sizing */
+    .header-wrapper {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .header-wrapper h1 {
+        font-size: 1.5em;
+        text-align: center;
+    }
+
+    /* Stack inputs and buttons vertically for better tap targets */
+    .input-area {
         flex-direction: column;
     }
+    
+    .input-area button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Make timeline vertical */
+    #timeline {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .step {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        text-align: left;
+        width: 100%;
+        gap: 15px;
+    }
+
+    .circle {
+        margin: 0;
+        flex-shrink: 0;
+    }
+
+    .step:not(:last-child)::after {
+        top: 32px;
+        left: 15px; /* Centers the vertical line under the 32px circle */
+        width: 3px;
+        height: calc(100% + 15px); /* Reaches down to the next circle */
+    }
+
+    /* Adjust tooltip position for vertical layout */
+    .tooltip {
+        bottom: auto;
+        top: 120%;
+        left: 0;
+        transform: translateX(0) translateY(5px);
+    }
+    
+    .step:hover .tooltip,
+    .step:focus .tooltip,
+    .step:active .tooltip {
+        transform: translateX(0) translateY(0);
+    }
+
+    .tooltip::after {
+        left: 20px;
+        transform: translateX(0);
+    }
+}
+
+/* --- Page Sections --- */
+.page-section {
+    background: var(--bg-container);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px var(--shadow-color);
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.section-divider {
+    display: none; /* Hidden, using flex gap instead */
 }
 
 /* --- New Features Styling --- */
 .ballot-section {
     background: var(--bg-timeline);
-    padding: 20px 15px 15px 15px; /* Added extra padding at the top */
+    padding: 20px 15px 15px 15px;
     border-radius: 10px;
-    margin-top: 25px; /* Added margin above the div */
     margin-bottom: 20px;
     border: 1px solid var(--border-timeline);
     text-align: left;
@@ -564,57 +650,4 @@ body.dark-mode .step.active .circle {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-/* --- Tab Navigation --- */
-.nav-tabs {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.tab-btn {
-    padding: 10px 20px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--text-color);
-    transition: all 0.3s ease;
-}
-
-.tab-btn:hover {
-    background: var(--border-color);
-}
-
-.tab-btn.active {
-    background: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-}
-
-.tab-content {
-    display: none;
-    animation: fadeIn 0.3s ease;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 768px) {
-    .nav-tabs {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .tab-btn {
-        width: 100%;
-    }
 }
