@@ -9,7 +9,7 @@ function showInfo(type) {
 // TODO: Replace the placeholder URL with your actual Render URL after deployment!
 const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
     ? 'http://localhost:3000' 
-    : 'https://your-render-url-goes-here.onrender.com';
+    : 'https://election-assistant-api.onrender.com';
 
 // Visually highlights the matching step in the timeline
 function highlightStep(keyword) {
