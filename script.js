@@ -429,7 +429,6 @@ async function checkBallot() {
         // ---------------------------
         
         const resultContainer = document.getElementById('civic-info-result');
-        const mapContainer = document.getElementById('map');
         
         let locations = data.pollingLocations || data.earlyVotingSites || data.dropOffLocations;
         
@@ -444,10 +443,6 @@ async function checkBallot() {
                 <p>${addressString}</p>
                 ${loc.pollingHours ? `<p><em>Hours: ${loc.pollingHours}</em></p>` : ''}
             `;
-            
-            // Show on map
-            mapContainer.style.display = 'block';
-            showOnMap(addressString, loc.address.locationName || 'Polling Station');
             
             // Set context for the AI Chatbot
             userContextString = `The user's polling location is ${loc.address.locationName} located at ${addressString}. The polling hours are: ${loc.pollingHours || 'Unknown'}.`;
@@ -493,11 +488,9 @@ async function checkBallot() {
                     ${admin.electionRegistrationUrl ? `<li><a href="${admin.electionRegistrationUrl}" target="_blank">Register to Vote</a></li>` : ''}
                 </ul>
             `;
-            mapContainer.style.display = 'none';
         } else {
             resultContainer.style.display = 'block';
             resultContainer.innerHTML = `<p>Sorry, no polling location found for this address. Note: The Google Civic API only returns data when an election is actively upcoming in your specified area.</p>`;
-            mapContainer.style.display = 'none';
         }
     } catch (error) {
         console.error('Civic Info Error:', error);
@@ -506,32 +499,6 @@ async function checkBallot() {
         btn.innerText = originalText;
         btn.disabled = false;
     }
-}
-
-function showOnMap(address, title) {
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ address: address }, (results, status) => {
-        if (status === 'OK') {
-            if (!map) {
-                map = new google.maps.Map(document.getElementById('map'), {
-                    zoom: 15,
-                    center: results[0].geometry.location
-                });
-            } else {
-                map.setCenter(results[0].geometry.location);
-            }
-            
-            if (marker) {
-                marker.setMap(null);
-            }
-            
-            marker = new google.maps.Marker({
-                map: map,
-                position: results[0].geometry.location,
-                title: title
-            });
-        }
-    });
 }
 
 // 3. Add to Calendar functionality
