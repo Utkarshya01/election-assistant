@@ -468,6 +468,42 @@ body.dark-mode .step.active .circle {
     }
 }
 
+/* --- Layout for Side Map --- */
+.main-content-layout {
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
+}
+
+.chat-section {
+    flex: 6;
+    display: flex;
+    flex-direction: column;
+}
+
+.side-map-section {
+    flex: 4;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-timeline);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid var(--border-timeline);
+}
+
+#side-map {
+    flex: 1;
+    min-height: 250px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+@media (max-width: 768px) {
+    .main-content-layout {
+        flex-direction: column;
+    }
+}
+
 /* --- New Features Styling --- */
 .ballot-section {
     background: var(--bg-timeline);
